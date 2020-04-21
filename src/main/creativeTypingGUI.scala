@@ -141,7 +141,7 @@ object typingGUI extends App {
     //START GAME HERE:
     var userSentences = 0
     var compSentences = 0
-    val sentenceCap = 2
+    val sentenceCap = 10
     var gameOver = false
     typingGame.newSentence()
     target.setText(typingGame.wordBank)
