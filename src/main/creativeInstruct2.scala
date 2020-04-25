@@ -1,3 +1,10 @@
+/* creativeInstruct2.scala
+ * Contains a score update and the instructions for the Pattern Matching Game
+ * Called from creativeTypingGUI.scala, calls creativePatternGame.scala
+ * passes difficulty and current score
+ */
+
+
 package main
 import java.awt._
 import java.awt.event.ActionEvent
@@ -18,7 +25,10 @@ object instruct2 extends App {
     instruct.setBounds(0, 0, 500, 300)
     instruct.setFont(iFont)
     instruct.setEditable(false)
+    instruct.setWrapStyleWord(true)
+    instruct.setLineWrap(true)
 
+    //Score update
     if(userScore > compScore) {
       instruct.setText("User has won Round 1! User Score: " + userScore + " Comp Score: " + compScore + "\n\n")
     } else if (compScore > userScore) {
@@ -29,14 +39,14 @@ object instruct2 extends App {
     instruct.append(
       """The second mini game is a pattern matching challenge.
         |You will see 4 different options on your screen
-        |Pick the category of the option that doesn't belong ot the group!
+        |Pick the category of the option that doesn't belong to the group!
         |Click the category which you think is the WRONG category
         |The first player to correctly identify fifteen patterns wins!""".stripMargin)
 
     val b = new JButton("Start")
     b.addActionListener((e: ActionEvent) =>{
       if(e.getSource==b){
-        patternGUI.pattern(userScore, compScore, difficulty)
+        patternGUI.pattern(userScore, compScore, difficulty) //call creativePatternGUI.scala
         f.setVisible(false)
       }
     })

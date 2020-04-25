@@ -1,0 +1,5 @@
+10 Samsung blue
+9 Apple white
+10 Blackberry black
+8 Motorola purple
+4 Pixel white

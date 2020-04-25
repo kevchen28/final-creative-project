@@ -1,3 +1,7 @@
+/* creativeStartGUI.scala
+ * The initial GUI for our game program
+ * Contains 3 difficulties which will modify Computer Future delays
+ */
 
 import java.awt.event.ActionEvent
 import java.awt.{Color, Dimension, Font}
@@ -43,6 +47,7 @@ object startGui extends App {
   titleImage.add(body)
   top_panel.add(titleImage)
 
+  // calls instruct1
   val easy = new JButton("Easy")
 
   easy.addActionListener((e: ActionEvent) =>{

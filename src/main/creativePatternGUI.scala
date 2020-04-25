@@ -1,3 +1,9 @@
+/* creativePatternGUI.scala
+ * GUI for the Pattern Matching Challenge
+ * Future delay based off difficulty
+ * called from creativeInstruct2.scala, calls finalScreen.scala
+ */
+
 package main
 
 import java.awt.event.{ActionEvent, ActionListener}
@@ -91,7 +97,7 @@ object patternGUI extends App {
       userSide.add(userQ(x))
     }
 
-    var compQ : Array[JTextPane] = new Array[JTextPane] (4)
+    val compQ : Array[JTextPane] = new Array[JTextPane] (4)
     val title2 = new JLabel("Comp Question:")
     title2.setFont(beefy)
     compSide.add(title2)
@@ -113,82 +119,80 @@ object patternGUI extends App {
     middlePanel.add(userSide)
     middlePanel.add(compSide)
 
-    var wrongIndex = scala.util.Random.nextInt(4)
+    var wrongIndex = scala.util.Random.nextInt(4) //Pick a random choice to be the "wrong" choice
     patternGame.pickCaseClass()
     for(x <- 0 to 3) {
-      if(x == wrongIndex) {
-        var item = patternGame.pickItem(patternGame.secondaryClass)
+      if(x == wrongIndex) { //Output string of item that doesn't belong
+        val item = patternGame.pickItem(patternGame.secondaryClass)
         userQ(x).setText(patternGame.writeCaseClass(item))
-      } else {
-        var item = patternGame.pickItem(patternGame.primaryClass)
+      } else { //Output string of items that belong
+        val item = patternGame.pickItem(patternGame.primaryClass)
         userQ(x).setText(patternGame.writeCaseClass(item))
       }
     }
 
-    //Array classes will contain all possible classes in our game
-    var classes : Array[String] = new Array[String] (4)
-    classes(0) = "Coin"
-    classes(1) = "Phone"
-    classes(2) = "Car"
-    classes(3) = "Book"
-    val comboBox = new JComboBox(classes) //This is the dropdown
+    val comboBox = new JComboBox(patternGame.classList.toArray) //This is the dropdown
     comboBox.setEditable(false)
 
     var userCorrect = 0
     var compCorrect = 0
-    val cap = 15
+    val cap = 15 //how many correct answers needed to win
 
+    //User side of the game
     val submit = new JButton("Submit")
     val actions = new ActionListener {
       override def actionPerformed(e: ActionEvent): Unit = {
         if(e.getSource() == submit) {
-          var guess = comboBox.getSelectedItem()
-          if(guess == patternGame.secondaryClass) {
+          val guess = comboBox.getSelectedItem()
+          if(guess == patternGame.secondaryClass) { //If user guess is correct
             userPoints += 5
             userScore.setText(userPoints.toString())
             userCorrect += 1
-          } else {
+          } else {     //user guess is wrong
             userPoints -= 5
             userScore.setText(userPoints.toString())
           }
         }
-        if(userCorrect == cap) {
-          finalScreen.popup(userPoints, compPoints, difficulty)
+        if(userCorrect == cap) { //win condition
+          finalScreen.popup(userPoints, compPoints, difficulty) //show final screen with score
           f.setVisible(false)
         }
-        patternGame.pickCaseClass()
+        patternGame.pickCaseClass()    //pick new primary and secondary class
+        wrongIndex = scala.util.Random.nextInt(4) //pick a new random answer to be the wrong one
         for(x <- 0 to 3) {
           if(x == wrongIndex) {
-            var item = patternGame.pickItem(patternGame.secondaryClass)
+            val item = patternGame.pickItem(patternGame.secondaryClass)
             userQ(x).setText(patternGame.writeCaseClass(item))
           } else {
-            var item = patternGame.pickItem(patternGame.primaryClass)
+            val item = patternGame.pickItem(patternGame.primaryClass)
             userQ(x).setText(patternGame.writeCaseClass(item))
           }
         }
       }
     }
 
+    //computer side of the game
     val computerGame = Future {
-      while(userCorrect < 15) {
-        patternGame.pickCompCaseClass()
-        for (x <- 0 to 3) {
-          if (x == wrongIndex) {
-            var item = patternGame.pickItem(patternGame.compSecondaryClass)
+      while(userCorrect < cap) { //while game isn't over keep looping
+        patternGame.pickCompCaseClass() //pick primary and secondary case class for computer
+        val compWrongIndex = scala.util.Random.nextInt(4)
+        for (x <- 0 to 3) { //print options
+          if (x == compWrongIndex) {
+            val item = patternGame.pickItem(patternGame.compSecondaryClass)
             compQ(x).setText(patternGame.writeCaseClass(item))
           } else {
-            var item = patternGame.pickItem(patternGame.compPrimaryClass)
+            val item = patternGame.pickItem(patternGame.compPrimaryClass)
             compQ(x).setText(patternGame.writeCaseClass(item))
           }
         }
         var guess = patternGame.classList(scala.util.Random.nextInt(patternGame.classList.length - 1))
-        if (guess == patternGame.compSecondaryClass) {
+        if (guess == patternGame.compSecondaryClass) { //user guess is correct
           compPoints += 5
           compScore.setText(userPoints.toString())
           compCorrect += 1
         }
         compScore.setText(compPoints.toString())
-        if(compCorrect == 15) {
+        if(compCorrect == cap) { //win condition
           finalScreen.popup(userPoints, compPoints, difficulty)
           f.setVisible(false)
         }
@@ -220,21 +224,3 @@ object patternGUI extends App {
 
   }
 }
-/*
-//all of the actions needs to be reassigned, but the framework is there
-    val actions = new ActionListener {
-      override def actionPerformed(e: ActionEvent): Unit = {
-        if(e.getSource == b1) {
-          compQ(1).setText("BUtton 1!")
-        } else if (e.getSource == b2){
-          compQ(2).setText("Button 2!")
-        } else if (e.getSource == b3){
-          compQ(3).setText("Button 3!")
-        } else if (e.getSource == b4){
-          compQ(4).setText("Button 4!")
-        } else if (e.getSource == b5){
-          compTarget.setText("How far can I push this!")
-        }
-      }
-    }
- */

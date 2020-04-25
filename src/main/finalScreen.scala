@@ -1,6 +1,10 @@
+/* finalScreen.scala
+ * The end screen for the game. Prints the score
+ * called from creativePatternGUI.scala
+ */
+
 package main
 import java.awt._
-import java.awt.event.ActionEvent
 
 import javax.swing._
 
@@ -18,6 +22,8 @@ object finalScreen extends App {
     instruct.setBounds(0, 0, 500, 300)
     instruct.setFont(iFont)
     instruct.setEditable(false)
+    instruct.setWrapStyleWord(true)
+    instruct.setLineWrap(true)
 
     if(userScore > compScore) {
       instruct.setText("User has won the game! Congratulations! User Score: " + userScore + " Comp Score: " + compScore + "\n\n")

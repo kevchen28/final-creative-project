@@ -1,0 +1,5 @@
+1 Lincoln copper
+50 Kennedy silver
+5 Jefferson silver
+10 Roosevelt silver
+25 Washington Silver

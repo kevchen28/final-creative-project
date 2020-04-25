@@ -1,8 +1,15 @@
+/* patternGame.scala
+ * Contains functions and members used for creativePatternGUI.scala
+ * functions: writeCaseClass(), pickCaseClass(), pickCompCaseClass(), pickItem()
+ * members: classList, primaryClass, secondaryClass, compPrimaryClass, compSecondaryClass
+ */
+
 package main
+import scala.io.Source
 import scala.util.Random
 
 object patternGame {
-  def writeCaseClass(item: Item): String = {
+  def writeCaseClass(item: Item): String = { //outputs a string based off of the case class picked
     item match {
       case Coin(value: Int, face: String, color: String) =>
         "(" + value + ", " + face + ", " + color + ")"
@@ -15,44 +22,44 @@ object patternGame {
     }
   }
 
-  def pickCaseClass(): Unit = {
-    primaryClass = classList(Random.nextInt(classList.length - 1))
+  def pickCaseClass(): Unit = { // picks two random case classes from classList
+    primaryClass = classList(Random.nextInt(classList.length))
     val cl2 = classList diff List(primaryClass)
-    secondaryClass = cl2(Random.nextInt(cl2.length - 1))
+    secondaryClass = cl2(Random.nextInt(cl2.length))
   }
 
-  def pickCompCaseClass(): Unit = {
-    compPrimaryClass = classList(Random.nextInt(classList.length - 1))
+  def pickCompCaseClass(): Unit = { //picks two random case classes from classList
+    compPrimaryClass = classList(Random.nextInt(classList.length))
     val cl2 = classList diff List(primaryClass)
-    compSecondaryClass = cl2(Random.nextInt(cl2.length - 1))
+    compSecondaryClass = cl2(Random.nextInt(cl2.length))
   }
 
-  def pickItem(c: String): Item = {
-    var x = 0
-    c match {
+  def pickItem(c: String): Item = { //Picks a random item from a .txt file in the resources folder
+    def getLine(fname: String) : List[String] = {
+      def getFileLength(fname: String) : Int = { // How many lines are in file
+        Source.fromFile(fname).getLines.length
+      }
+      val index = scala.util.Random.nextInt(getFileLength(fname)+1)
+      val lines = Source.fromFile(fname).getLines()
+      val line = lines drop (index - 1)
+      line.next().split(" ").toList //parses by spaces in line, returns List[String]
+    }
+    val item = getLine("resources/" + c + ".txt") //reads random line from <Item>.txt in resources file
+    c match { //convert String into Item
       case "Coin" =>
-        x = Random.nextInt(coinList.length - 1)
-        coinList(x)
+        Coin(item(0).toInt, item(1), item(2))
       case "Phone" =>
-        x = Random.nextInt(phoneList.length - 1)
-        phoneList(x)
+        Phone(item(0).toInt, item(1), item(2))
       case "Car" =>
-        x = Random.nextInt(carList.length - 1)
-        carList(x)
+        Car(item(0).toInt, item(1), item(2))
       case "Book" =>
-        x = Random.nextInt(bookList.length - 1)
-        bookList(x)
+        Book(item(0).toInt, item(1), item(2))
     }
   }
 
-  val classList = List("Coin", "Phone", "Car", "Book")
+  val classList = List("Coin", "Phone", "Car", "Book") //list of classes you can choose from
   var primaryClass = ""
   var secondaryClass = ""
   var compPrimaryClass = ""
   var compSecondaryClass = ""
-
-  val coinList = List(Coin(1, "Lincoln", "copper"), Coin(50, "Kennedy", "silver"), Coin(5, "Jefferson", "silver"), Coin(10, "Roosevelt", "silver"), Coin(25, "Washington", "silver"))
-  val phoneList = List(Phone(10, "Samsung", "blue"), Phone(9, "Apple", "white"), Phone(10, "Blackberry", "black"), Phone(8, "Motorola", "purple"))
-  val carList = List(Car(2002, "Toyota", "red"), Car(2019, "Tesla", "black"), Car(2009, "Honda", "blue"), Car(2007, "Mazda", "green"))
-  val bookList = List(Book(1925, "Fitzgerald", "white"), Book(1997, "Rowling", "red"), Book(1949, "Orwell", "white"), Book(1954, "Tolkein", "blue"))
 }

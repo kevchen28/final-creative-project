@@ -1,11 +1,13 @@
+/* creativeInstruct1.scala
+ * Contains the instructions for the Typing Challenge Game
+ * Called from creativeStartGUI.scala, calls creativeTypingGUI.scala
+ */
+
 package main
 
 import java.awt.event.ActionEvent
 import java.awt.{Color, BorderLayout, Font}
 import javax.swing._
-
-
-import main.typingGUI
 
 object instruct1 extends App {
   def popup(difficulty: Int): Unit={
@@ -21,14 +23,19 @@ object instruct1 extends App {
     instruct.setBounds(0, 0, 500, 300)
     instruct.setFont(iFont)
     instruct.setEditable(false)
+    instruct.setWrapStyleWord(true)
+    instruct.setLineWrap(true)
+
     instruct.setText(
       """The first mini game is a typing challenge.
         |You will see a scrambled sentence in the 'target' field.
         |Type in each word, one at a time, to gain points.
         |Points will be removed for incorrect entries.
         |The computer will also compete to fill in scrambled sentences.
-        |The first player to completely enter ten sentences will receive a bonus of 10 points!""".stripMargin)
+        |The first player to completely enter ten sentences will receive a
+        |bonus of 10 points!""".stripMargin)
 
+    // calls typingGUI
     val b = new JButton("Start")
     b.addActionListener((e: ActionEvent) =>{
       if(e.getSource==b){

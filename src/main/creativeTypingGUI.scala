@@ -1,3 +1,9 @@
+/* creativeTypingGUI.scala
+ * GUI for the Typing Game Challenge
+ * Future delay based off difficulty
+ * called from creativeInstruct1.scala, calls creativeInstruct2.scala
+ */
+
 package main
 
 import java.awt._
@@ -25,6 +31,7 @@ object typingGUI extends App {
     val totalPanel = new JPanel()
     totalPanel.setLayout(new BoxLayout(totalPanel, BoxLayout.Y_AXIS))
 
+    //Scoreboard and Frame
     val f= new JFrame("Typing Challenge")
     val userIden = new JLabel("User Score:")
     val userScore = new JLabel()
@@ -51,32 +58,41 @@ object typingGUI extends App {
     userSide.setLayout(new BoxLayout(userSide, BoxLayout.Y_AXIS))
     userSide.setBackground(HC)
     userSide.setBorder(BorderFactory.createLineBorder(Color.BLACK))
+    userSide.setMinimumSize(new Dimension(500,500))
     val compSide = new JPanel()
     compSide.setLayout(new BoxLayout(compSide, BoxLayout.Y_AXIS))
     compSide.setBackground(HC)
     compSide.setBorder(BorderFactory.createLineBorder(Color.BLACK))
+    compSide.setMinimumSize(new Dimension(500,500))
 
     val bottomPanel = new JPanel()
     bottomPanel.setLayout(new FlowLayout(FlowLayout.LEFT))
     bottomPanel.setBackground(HC)
 
+    // TextAreas for the user's and computer's game
     val title1 = new JLabel("User Target:")
     val target = new JTextArea()
+    title1.setHorizontalAlignment(SwingConstants.LEFT)
     target.setBackground(Color.LIGHT_GRAY)
     target.setForeground(Color.BLACK)
     target.setEditable(false)
+    target.setPreferredSize(new Dimension(50, 50))
     val scrollPane1 = new JScrollPane(target)
     val title2 = new JLabel("User Completed:")
+    title2.setHorizontalAlignment(SwingConstants.LEFT)
     val progress = new JTextArea()
     progress.setBackground(Color.LIGHT_GRAY)
     progress.setEditable(false)
     progress.setForeground(crimson)
+    progress.setPreferredSize(new Dimension(50, 50))
     val scrollPane2 = new JScrollPane(progress)
-    val title5 = new JLabel("User Partial Sentence:")
+    val title5 = new JLabel("User Partial Sentence:", SwingConstants.CENTER)
     val partial = new JTextArea()
+    title5.setLayout(new FlowLayout(FlowLayout.CENTER))
     partial.setBackground(Color.LIGHT_GRAY)
     partial.setEditable(false)
     partial.setForeground(crimson)
+    partial.setPreferredSize(new Dimension(50, 50))
     val scrollPane3 = new JScrollPane(partial)
     val submit = new JTextField(15)
     val enter = new JButton("Enter")
@@ -95,18 +111,21 @@ object typingGUI extends App {
     compTarget.setBackground(Color.LIGHT_GRAY)
     compTarget.setForeground(Color.BLACK)
     compTarget.setEditable(false)
+    compTarget.setPreferredSize(new Dimension(50, 50))
     val scrollPane4 = new JScrollPane(compTarget)
     val title4 = new JLabel("Comp Completed:")
     val compProgress = new JTextArea()
     compProgress.setBackground(Color.LIGHT_GRAY)
     compProgress.setEditable(false)
     compProgress.setForeground(crimson)
+    compProgress.setPreferredSize(new Dimension(50, 50))
     val scrollPane5 = new JScrollPane(compProgress)
     val title6 = new JLabel("Comp Partial Sentence:")
     val compPartial = new JTextArea()
     compPartial.setBackground(Color.LIGHT_GRAY)
     compPartial.setEditable(false)
     compPartial.setForeground(crimson)
+    compPartial.setPreferredSize(new Dimension(50, 50))
     val scrollPane6 = new JScrollPane(compPartial)
     compSide.add(title3)
     compSide.add(compTarget)
@@ -136,56 +155,62 @@ object typingGUI extends App {
     f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
     f.setLocation(400, 150)
 
+    //Automatically place cursor in the entry box. Hitting "ENTER" on keyboard submits text
     f.getRootPane().setDefaultButton(enter)
     submit.requestFocus()
+
+
     //START GAME HERE:
-    var userSentences = 0
-    var compSentences = 0
-    val sentenceCap = 10
+    var userSentences = 0 //how many sentences user has completed
+    var compSentences = 0 //how many sentences user has completed
+    val sentenceCap = 10 //sentence completion threshold
     var gameOver = false
-    typingGame.newSentence()
-    target.setText(typingGame.wordBank)
+
+    typingGame.newSentence()   // get new sentence at random for user
+    target.setText(typingGame.wordBank)  // scrambles sentence and displays in word bank
     enter.addActionListener((e: ActionEvent) =>{
       if(e.getSource==enter) {
-        partial.append(typingGame.checkGuess(submit.getText))
+        partial.append(typingGame.checkGuess(submit.getText))   // checks if the guess is correct, adds word to partially completed if true
         userScore.setText(typingGame.userPoints.toString())
         submit.requestFocus()
         submit.setText("")
 
         target.setText(typingGame.wordBank)
 
-        if(typingGame.sentence.size == 0) {
+        if(typingGame.sentence.size == 0) { //When user has completed a sentence
           userSentences += 1
           title2.setText("User Completed:" + userSentences.toString())
           progress.append(typingGame.sentenceString + "\n")
           partial.setText("")
-          if(userSentences == sentenceCap) {
+
+          if(userSentences == sentenceCap) { //user wins
             typingGame.userPoints += bonus
             userScore.setText(typingGame.userPoints.toString())
             submit.setEditable(false)
             f.requestFocus()
             gameOver = true
             enter.setEnabled(false)
-            instruct2.popup(typingGame.userPoints, typingGame.compPoints, difficulty)
+            instruct2.popup(typingGame.userPoints, typingGame.compPoints, difficulty) // Go to creativeInstruct2.scala
             f.setVisible(false)
           } else {
             typingGame.newSentence()
-            target.setText(typingGame.wordBank)
+            target.setText(typingGame.wordBank) //print updated word bank
           }
         }
       }
     })
 
+    // The computer's side of the game
     val computerGame = Future {
-      typingGame.newSentenceComp()
+      typingGame.newSentenceComp() // get new sentence at random for computer
       compTarget.setText(typingGame.wordBankComp)
-      while(compSentences < sentenceCap && !gameOver) {
-        val guess = typingGame.wordListComp(Random.nextInt(typingGame.wordListComp.length))
+      while(compSentences < sentenceCap && !gameOver) { //Keep running computerGame until game is over
+        val guess = typingGame.wordListComp(Random.nextInt(typingGame.wordListComp.length)) //Computer picks a random word from word bank as guess
         compPartial.append(typingGame.checkGuessComp(guess))
         compScore.setText(typingGame.compPoints.toString())
 
         compTarget.setText(typingGame.wordBankComp)
-        if(typingGame.sentenceComp.size == 0) {
+        if(typingGame.sentenceComp.size == 0) { //when computer completes a sentence
           compSentences += 1
           title4.setText("Comp Completed:" + compSentences.toString())
           compProgress.append(typingGame.sentenceStringComp + "\n")
@@ -196,14 +221,14 @@ object typingGUI extends App {
             submit.setText("")
             submit.setEditable(false)
             f.requestFocus()
-            instruct2.popup(typingGame.userPoints, typingGame.compPoints, difficulty)
+            instruct2.popup(typingGame.userPoints, typingGame.compPoints, difficulty) // Go to creativeInstruct2.scala
             f.setVisible(false)
           } else {
             typingGame.newSentenceComp()
-            compTarget.setText(typingGame.wordBankComp)
+            compTarget.setText(typingGame.wordBankComp) //print updated word bank
           }
         }
-        Thread.sleep(delay)
+        Thread.sleep(delay) // delay based on difficulty
       }
     }
   }
