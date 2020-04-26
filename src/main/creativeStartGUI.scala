@@ -11,7 +11,7 @@ import javax.swing.plaf.basic.DefaultMenuLayout
 import main.instruct1
 
 object startGui extends App {
-  //This will return to main who calls startGUI
+  //This will return to typing challenge's instruction GUI
   //0 for easy, 1 for medium, 2 for hard
   //var difficulty: Int = new Int
 
@@ -19,6 +19,7 @@ object startGui extends App {
   frame.setPreferredSize(new Dimension(700, 600))
   frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
 
+  //Making a top and bottom panel to go in total panel ensures that the button appear in the middle of the screen 
   val total_panel = new JPanel()
   total_panel.setLayout(new DefaultMenuLayout(total_panel, BoxLayout.Y_AXIS))
   total_panel.setOpaque(true)
@@ -30,22 +31,6 @@ object startGui extends App {
   val bottom_panel = new JPanel()
   bottom_panel.setOpaque(true)
   bottom_panel.setBackground(Color.ORANGE)
-
-
-  val titleImage = new JLabel(new ImageIcon("resources/fire2.jpg"))
-  val text = new JLabel("Computer Battle!")
-  val titleFont = new Font(Font.SANS_SERIF, Font.BOLD, 20)
-  text.setFont(titleFont)
-  text.setLocation(350, 100)
-  titleImage.add(text)
-
-  val bodyFont = new Font(Font.SANS_SERIF, Font.PLAIN, 10)
-  val body = new JLabel("Battle against the computer in mini games. Compete to earn the top score!")
-  body.setLocation(350, 200)
-  body.setFont(bodyFont)
-  body.setHorizontalAlignment(SwingConstants.CENTER)
-  titleImage.add(body)
-  top_panel.add(titleImage)
 
   // calls instruct1
   val easy = new JButton("Easy")
@@ -77,7 +62,7 @@ object startGui extends App {
     }
   })
 
-
+  //Add together the pieces of the GUI
   bottom_panel.add(easy)
   bottom_panel.add(medium)
   bottom_panel.add(hard)
